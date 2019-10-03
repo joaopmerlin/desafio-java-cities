@@ -5,30 +5,12 @@
             http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
             http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
 
-    <cache alias="StateClientFindAll">
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <offheap unit="MB">10</offheap>
-        </resources>
-    </cache>
-
     <cache alias="CityClientFindAll">
         <expiry>
             <ttl unit="hours">24</ttl>
         </expiry>
         <resources>
             <offheap unit="MB">100</offheap>
-        </resources>
-    </cache>
-
-    <cache alias="CityClientFindByState">
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <offheap unit="MB">10</offheap>
         </resources>
     </cache>
 

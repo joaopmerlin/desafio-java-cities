@@ -1,10 +1,11 @@
 package br.com.joaomerlin.cities.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Builder;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 @Builder
@@ -24,6 +25,16 @@ public class Export implements Serializable {
 
     @JsonProperty("nomeMesorregiao")
     private String mesoRegionName;
+
+    public static Export fromCity(City city) {
+        return Export.builder()
+                .stateId(city.getMicroRegion().getMesoRegion().getState().getId())
+                .stateAcronym(city.getMicroRegion().getMesoRegion().getState().getAcronym())
+                .regionName(city.getMicroRegion().getMesoRegion().getState().getRegion().getName())
+                .cityName(city.getName())
+                .mesoRegionName(city.getMicroRegion().getMesoRegion().getName())
+                .build();
+    }
 
     @JsonProperty("nomeFormatado")
     public String getFormattedName() {

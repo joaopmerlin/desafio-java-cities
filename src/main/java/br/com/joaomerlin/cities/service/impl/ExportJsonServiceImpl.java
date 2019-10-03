@@ -1,33 +1,30 @@
 package br.com.joaomerlin.cities.service.impl;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.joaomerlin.cities.client.CityClient;
+import br.com.joaomerlin.cities.model.Export;
 import br.com.joaomerlin.cities.model.Format;
 import br.com.joaomerlin.cities.service.ExportService;
+import br.com.joaomerlin.cities.service.FileService;
 
 @Service
 public class ExportJsonServiceImpl extends ExportServiceImpl implements ExportService {
 
     private final ObjectMapper objectMapper;
 
-    protected ExportJsonServiceImpl(CityClient cityClient, ObjectMapper objectMapper) {
-        super(cityClient);
+    protected ExportJsonServiceImpl(CityClient cityClient, FileService fileService, ObjectMapper objectMapper) {
+        super(cityClient, fileService);
         this.objectMapper = objectMapper;
     }
 
     @Override
-    protected void write(OutputStream outputStream) {
-        try {
-            outputStream.write(objectMapper.writeValueAsBytes(buildExport()));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write json", e);
-        }
+    protected byte[] write(List<Export> exports) throws Exception {
+        return objectMapper.writeValueAsBytes(exports);
     }
 
     @Override
