@@ -28,7 +28,7 @@ public abstract class ExportServiceImpl implements ExportService {
     public void export(OutputStream outputStream) {
         String fileName = String.format("export_%s.%s", LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE), getFormat().getExt());
         File file = fileService.get(fileName);
-        if (file.exists()) {
+        if (file != null && file.exists()) {
             try {
                 new FileInputStream(file).transferTo(outputStream);
                 return;

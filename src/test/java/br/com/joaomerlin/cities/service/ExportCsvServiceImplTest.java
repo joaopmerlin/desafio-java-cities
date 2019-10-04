@@ -1,0 +1,67 @@
+package br.com.joaomerlin.cities.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import br.com.joaomerlin.cities.CitiesApplicationTests;
+import br.com.joaomerlin.cities.client.CityClient;
+import br.com.joaomerlin.cities.model.City;
+import br.com.joaomerlin.cities.model.MesoRegion;
+import br.com.joaomerlin.cities.model.MicroRegion;
+import br.com.joaomerlin.cities.model.Region;
+import br.com.joaomerlin.cities.model.State;
+import br.com.joaomerlin.cities.service.impl.ExportCsvServiceImpl;
+
+public class ExportCsvServiceImplTest extends CitiesApplicationTests {
+
+    @MockBean
+    private CityClient cityClient;
+
+    @MockBean
+    private FileService fileService;
+
+    @Autowired
+    private ExportCsvServiceImpl service;
+
+    @Before
+    public void before() {
+        Region region = new Region(1, "S", "Sul");
+        State state = new State(1, "SC", "Santa Catarina", region);
+        MesoRegion mesoRegion = new MesoRegion(1, "Vale do Itajaí", state);
+        MicroRegion microRegion = new MicroRegion(1, "Blumenau", mesoRegion);
+        List<City> cities = List.of(
+                new City(1, "Blumenau", microRegion),
+                new City(2, "Brusque", microRegion),
+                new City(3, "Gaspar", microRegion)
+        );
+        when(cityClient.findAll()).thenReturn(cities);
+    }
+
+    @Test
+    public void exportTest() throws IOException {
+        when(fileService.get(anyString())).thenReturn(null);
+        when(fileService.store(anyString(), any())).thenReturn(null);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        service.export(outputStream);
+
+        String expected = "idEstado,nomeCidade,nomeFormatado,nomeMesorregiao,regiaoNome,siglaEstado\n" +
+                "1,Blumenau,Blumenau/SC,\"Vale do Itajaí\",Sul,SC\n" +
+                "1,Brusque,Brusque/SC,\"Vale do Itajaí\",Sul,SC\n" +
+                "1,Gaspar,Gaspar/SC,\"Vale do Itajaí\",Sul,SC\n";
+
+        assertEquals(expected, outputStream.toString());
+    }
+}
