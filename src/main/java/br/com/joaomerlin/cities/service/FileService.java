@@ -7,5 +7,5 @@ public interface FileService {
 
     File get(String name);
 
-    void store(String name, byte[] bytes) throws IOException;
+    File store(String name, byte[] bytes) throws IOException;
 }

@@ -1,4 +1,4 @@
-package br.com.joaomerlin.cities.service;
+package br.com.joaomerlin.cities.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,6 +8,8 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import br.com.joaomerlin.cities.service.FileService;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -26,7 +28,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void store(String name, byte[] bytes) throws IOException {
-        new FileOutputStream(fileDir + File.separator + name).write(bytes);
+    public File store(String name, byte[] bytes) throws IOException {
+        File file = new File(fileDir + File.separator + name);
+        new FileOutputStream(file).write(bytes);
+        return file;
     }
 }
