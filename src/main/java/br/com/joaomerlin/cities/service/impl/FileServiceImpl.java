@@ -26,7 +26,6 @@ public class FileServiceImpl implements FileService {
         try {
             return new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            log.warn("File not found", e);
             return null;
         }
     }
