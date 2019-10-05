@@ -18,6 +18,7 @@ public interface CityClient {
     @RequestMapping(value = "municipios", method = RequestMethod.GET)
     List<City> findAll();
 
+    @Cacheable("CityClientFindByState")
     @RequestMapping(value = "estados/{id}/municipios", method = RequestMethod.GET)
     List<City> findByState(@PathVariable Integer id);
 

@@ -3,6 +3,7 @@ package br.com.joaomerlin.cities.client.fallback;
 import br.com.joaomerlin.cities.client.StateClient;
 import br.com.joaomerlin.cities.model.State;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class StateClientFallback implements StateClient {
 
     @Override
+    @CacheEvict("StateClientFindAll")
     public List<State> findAll() {
         log.warn("Returning fallback for StateClient.findAll");
         return List.of();

@@ -1,28 +1,27 @@
 package br.com.joaomerlin.cities.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
+import br.com.joaomerlin.cities.CitiesApplicationTests;
+import br.com.joaomerlin.cities.client.CityClient;
+import br.com.joaomerlin.cities.client.StateClient;
+import br.com.joaomerlin.cities.model.*;
+import br.com.joaomerlin.cities.service.impl.CityServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import br.com.joaomerlin.cities.CitiesApplicationTests;
-import br.com.joaomerlin.cities.client.CityClient;
-import br.com.joaomerlin.cities.model.City;
-import br.com.joaomerlin.cities.model.MesoRegion;
-import br.com.joaomerlin.cities.model.MicroRegion;
-import br.com.joaomerlin.cities.model.Region;
-import br.com.joaomerlin.cities.model.State;
-import br.com.joaomerlin.cities.service.impl.CityServiceImpl;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class CityServiceImplTest extends CitiesApplicationTests {
 
     @MockBean
     private CityClient cityClient;
+
+    @MockBean
+    private StateClient stateClient;
 
     @Autowired
     private CityServiceImpl service;
@@ -38,7 +37,9 @@ public class CityServiceImplTest extends CitiesApplicationTests {
                 new City(2, "Brusque", microRegion),
                 new City(3, "Gaspar", microRegion)
         );
+        when(stateClient.findAll()).thenReturn(List.of(state));
         when(cityClient.findAll()).thenReturn(cities);
+        when(cityClient.findByState(1)).thenReturn(cities);
     }
 
     @Test

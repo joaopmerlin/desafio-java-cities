@@ -1,16 +1,14 @@
 package br.com.joaomerlin.cities.service.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
-import javax.annotation.PostConstruct;
-
+import br.com.joaomerlin.cities.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import br.com.joaomerlin.cities.service.FileService;
+import javax.annotation.PostConstruct;
+import java.io.*;
 
+@Slf4j
 @Service
 public class FileServiceImpl implements FileService {
 
@@ -23,8 +21,14 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File get(String name) {
-        return new File(fileDir + File.separator + name);
+    public InputStream get(String name) {
+        File file = new File(fileDir + File.separator + name);
+        try {
+            return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            log.warn("File not found", e);
+            return null;
+        }
     }
 
     @Override

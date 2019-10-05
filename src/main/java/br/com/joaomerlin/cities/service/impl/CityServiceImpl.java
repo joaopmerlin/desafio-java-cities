@@ -1,6 +1,7 @@
 package br.com.joaomerlin.cities.service.impl;
 
 import br.com.joaomerlin.cities.client.CityClient;
+import br.com.joaomerlin.cities.client.StateClient;
 import br.com.joaomerlin.cities.model.City;
 import br.com.joaomerlin.cities.service.CityService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class CityServiceImpl implements CityService {
 
     private final CityClient cityClient;
+    private final StateClient stateClient;
 
     @Override
     @Cacheable("CityServiceImplFindByName")
@@ -26,9 +28,9 @@ public class CityServiceImpl implements CityService {
     @Override
     @Cacheable("CityServiceImplFindByNameAndState")
     public Optional<City> findByNameAndState(String name, String state) {
-        return cityClient.findAll().parallelStream()
-                .filter(e -> e.getMicroRegion().getMesoRegion().getState().getAcronym().equalsIgnoreCase(state))
-                .filter(e -> e.getName().equalsIgnoreCase(name))
-                .findFirst();
+        return stateClient.findAll().parallelStream()
+                .filter(e -> e.getAcronym().equalsIgnoreCase(state)).findAny()
+                .flatMap(e -> cityClient.findByState(e.getId()).parallelStream()
+                        .filter(i -> i.getName().equalsIgnoreCase(name)).findAny());
     }
 }

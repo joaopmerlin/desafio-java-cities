@@ -3,7 +3,7 @@ package br.com.joaomerlin.cities.service;
 import br.com.joaomerlin.cities.CitiesApplicationTests;
 import br.com.joaomerlin.cities.client.CityClient;
 import br.com.joaomerlin.cities.model.*;
-import br.com.joaomerlin.cities.service.impl.ExportCsvServiceImpl;
+import br.com.joaomerlin.cities.service.impl.ExportJsonServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.verification.Times;
@@ -18,11 +18,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ExportCsvServiceImplTest extends CitiesApplicationTests {
+public class ExportJsonServiceImplTest extends CitiesApplicationTests {
 
     @MockBean
     private CityClient cityClient;
@@ -31,7 +32,7 @@ public class ExportCsvServiceImplTest extends CitiesApplicationTests {
     private FileService fileService;
 
     @Autowired
-    private ExportCsvServiceImpl service;
+    private ExportJsonServiceImpl service;
 
     @Before
     public void before() {
@@ -50,15 +51,13 @@ public class ExportCsvServiceImplTest extends CitiesApplicationTests {
     @Test
     public void exportTest() throws IOException {
         when(fileService.get(anyString())).thenReturn(null);
+        when(fileService.store(anyString(), any())).thenReturn(null);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         service.export(outputStream);
 
-        String expected = "idEstado,nomeCidade,nomeFormatado,nomeMesorregiao,regiaoNome,siglaEstado\n" +
-                "1,Blumenau,Blumenau/SC,\"Vale do Itajaí\",Sul,SC\n" +
-                "1,Brusque,Brusque/SC,\"Vale do Itajaí\",Sul,SC\n" +
-                "1,Gaspar,Gaspar/SC,\"Vale do Itajaí\",Sul,SC\n";
+        String expected = "[{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Blumenau\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Blumenau/SC\"},{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Brusque\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Brusque/SC\"},{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Gaspar\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Gaspar/SC\"}]";
 
         assertEquals(expected, outputStream.toString());
     }
@@ -71,12 +70,9 @@ public class ExportCsvServiceImplTest extends CitiesApplicationTests {
 
         service.export(outputStream);
 
-        String fileName = String.format("export_%s.%s", LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE), "csv");
+        String fileName = String.format("export_%s.%s", LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE), "json");
 
-        String expected = "idEstado,nomeCidade,nomeFormatado,nomeMesorregiao,regiaoNome,siglaEstado\n" +
-                "1,Blumenau,Blumenau/SC,\"Vale do Itajaí\",Sul,SC\n" +
-                "1,Brusque,Brusque/SC,\"Vale do Itajaí\",Sul,SC\n" +
-                "1,Gaspar,Gaspar/SC,\"Vale do Itajaí\",Sul,SC\n";
+        String expected = "[{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Blumenau\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Blumenau/SC\"},{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Brusque\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Brusque/SC\"},{\"idEstado\":1,\"siglaEstado\":\"SC\",\"regiaoNome\":\"Sul\",\"nomeCidade\":\"Gaspar\",\"nomeMesorregiao\":\"Vale do Itajaí\",\"nomeFormatado\":\"Gaspar/SC\"}]";
 
         when(fileService.get(anyString())).thenReturn(new ByteArrayInputStream(expected.getBytes()));
 

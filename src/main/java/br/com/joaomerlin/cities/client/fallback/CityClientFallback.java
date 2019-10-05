@@ -21,6 +21,7 @@ public class CityClientFallback implements CityClient {
     }
 
     @Override
+    @CacheEvict("CityClientFindByState")
     public List<City> findByState(Integer id) {
         log.warn("Returning fallback for CityClient.findByState");
         return List.of();
